@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// 能量护盾掉落道具：自然旋转并向下缓慢漂移，接触玩家后赋予 1 层能量护盾
@@ -53,6 +53,11 @@ public class ShieldPickup : MonoBehaviour
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.PlayShieldPickupSound();
+            }
+
+            if (MissionManager.Instance != null)
+            {
+                MissionManager.Instance.OnShieldCollected();
             }
 
             Destroy(gameObject);

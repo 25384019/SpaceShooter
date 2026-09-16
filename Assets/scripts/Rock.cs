@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -188,6 +188,12 @@ public class Rock : MonoBehaviour
         {
             GameManager.Instance.AddScore(scoreValue);
             GameManager.Instance.PlayExplosionSound();
+        }
+
+        // 任务契约计数
+        if (MissionManager.Instance != null)
+        {
+            MissionManager.Instance.OnRockDestroyed();
         }
 
         // 4. 概率掉落护盾道具

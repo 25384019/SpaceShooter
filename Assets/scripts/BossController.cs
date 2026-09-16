@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -317,6 +317,12 @@ public class BossController : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScore(15);
+        }
+
+        // 任务契约计数
+        if (MissionManager.Instance != null)
+        {
+            MissionManager.Instance.OnBossKilled();
         }
 
         state = BossState.Defeated;

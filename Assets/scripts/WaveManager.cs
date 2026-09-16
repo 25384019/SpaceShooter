@@ -127,8 +127,16 @@ public class WaveManager : MonoBehaviour
     public void OnBossDefeated()
     {
         currentStage = WaveStage.Cleared;
-        ShowBanner("★ VICTORY! SECTOR CLEARED! ★", 3.0f, new Color(0.2f, 1f, 0.3f));
-        StartCoroutine(VictoryDelayRoutine());
+        ShowBanner("★ FLAGSHIP DESTROYED! PLANETARY BODY DETECTED ★", 3.0f, new Color(0.2f, 1f, 0.3f));
+
+        if (PlanetEncounter.Instance != null)
+        {
+            PlanetEncounter.Instance.TriggerEncounter();
+        }
+        else
+        {
+            StartCoroutine(VictoryDelayRoutine());
+        }
     }
 
     private IEnumerator VictoryDelayRoutine()

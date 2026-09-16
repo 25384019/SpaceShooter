@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
     private GUIStyle bestStyle;
     private GUIStyle timeStyle;
     private GUIStyle newHighStyle;
+    private GUIStyle energyStyle;
+    private GUIStyle missionStyle;
     private Rect scoreRect = new Rect(25, 20, 220, 28);
     private Rect bestRect = new Rect(25, 50, 220, 28);
     private Rect timeRect = new Rect(25, 80, 220, 28);
@@ -135,6 +137,17 @@ public class GameManager : MonoBehaviour
         newHighStyle.fontSize = 18;
         newHighStyle.normal.textColor = new Color(0.2f, 1f, 0.3f);
         newHighStyle.fontStyle = FontStyle.Bold;
+
+        energyStyle = new GUIStyle();
+        energyStyle.fontSize = 16;
+        energyStyle.alignment = TextAnchor.MiddleRight;
+        energyStyle.normal.textColor = new Color(0.2f, 0.9f, 1f);
+        energyStyle.fontStyle = FontStyle.Bold;
+
+        missionStyle = new GUIStyle();
+        missionStyle.fontSize = 15;
+        missionStyle.normal.textColor = new Color(1f, 0.85f, 0.3f);
+        missionStyle.fontStyle = FontStyle.Bold;
     }
 
     private void SetupDigitDisplay()
@@ -229,6 +242,34 @@ public class GameManager : MonoBehaviour
             GameObject eventObj = new GameObject("RandomEventManager");
             eventObj.AddComponent<RandomEventManager>();
         }
+
+        // 6. Ensure PlayerProfile & Energy
+        if (PlayerProfile.Instance == null && FindObjectOfType<PlayerProfile>() == null)
+        {
+            GameObject profObj = new GameObject("PlayerProfile");
+            profObj.AddComponent<PlayerProfile>();
+        }
+
+        // 7. Ensure MissionManager
+        if (MissionManager.Instance == null && FindObjectOfType<MissionManager>() == null)
+        {
+            GameObject missionObj = new GameObject("MissionManager");
+            missionObj.AddComponent<MissionManager>();
+        }
+
+        // 8. Ensure PlanetEncounter
+        if (PlanetEncounter.Instance == null && FindObjectOfType<PlanetEncounter>() == null)
+        {
+            GameObject planetObj = new GameObject("PlanetEncounter");
+            planetObj.AddComponent<PlanetEncounter>();
+        }
+
+        // 9. Ensure StarMapController
+        if (StarMapController.Instance == null && FindObjectOfType<StarMapController>() == null)
+        {
+            GameObject mapObj = new GameObject("StarMapController");
+            mapObj.AddComponent<StarMapController>();
+        }
     }
 
     void Update()
@@ -249,6 +290,14 @@ public class GameManager : MonoBehaviour
             if (digitDisplay != null)
             {
                 digitDisplay.UpdateDisplay(currentSecond);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            if (StarMapController.Instance != null)
+            {
+                StarMapController.Instance.isMapOpen = !StarMapController.Instance.isMapOpen;
             }
         }
 
@@ -358,9 +407,28 @@ public class GameManager : MonoBehaviour
         GUI.Label(bestRect, cachedBestText, bestStyle);
         GUI.Label(timeRect, cachedTimeText, timeStyle);
 
+        // 任务契约进度条
+        if (MissionManager.Instance != null && MissionManager.Instance.activeMission != null)
+        {
+            GUI.Label(new Rect(25, 110, 420, 26), "CONTRACT: " + MissionManager.Instance.activeMission.GetProgressString(), missionStyle);
+        }
+
+        // 右上角战略能源与信用点
+        string energyText = $"ENERGY: {EnergySystem.CurrentEnergy}/{EnergySystem.MaxEnergy}⚡  CREDITS: ${EnergySystem.Credits}";
+        GUI.Label(new Rect(Screen.width - 380, 20, 355, 28), energyText, energyStyle);
+
+        // 星图快捷呼出按钮
+        if (GUI.Button(new Rect(Screen.width - 140, 50, 115, 26), "[M] STAR MAP"))
+        {
+            if (StarMapController.Instance != null)
+            {
+                StarMapController.Instance.isMapOpen = !StarMapController.Instance.isMapOpen;
+            }
+        }
+
         if (isNewHighScore)
         {
-            GUI.Label(newHighRect, "★ NEW HIGH SCORE! ★", newHighStyle);
+            GUI.Label(new Rect(25, 140, 240, 30), "★ NEW HIGH SCORE! ★", newHighStyle);
         }
     }
 }
