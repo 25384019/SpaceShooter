@@ -1,0 +1,54 @@
+﻿# Unity standard .gitignore
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+MemoryCaptures/
+Recordings/
+
+# Visual Studio / Rider / VS Code cache
+.vs/
+.vsconfig
+.idea/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+*.VC.db
+
+# Unity generated and editor temporary files
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+*.stackdump
+*.dwlt
+build_request.txt
+test_compile.dll
+test_compile.dll.meta
+
+# Codely & Plastic SCM
+.codely-cli/
+.codely.packages/
+.codelyignore
+.com-unity-codely.json
+.plastic/
+
+# OS generated
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+UpgradeLog.htm
+build.log
+ignore.conf
