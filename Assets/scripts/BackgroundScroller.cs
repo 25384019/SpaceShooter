@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// 无缝星空背景滚动器：精确计算精灵边界，自愈丢失材质，消除拼缝抖动，实现平滑纵深飞行效果
@@ -12,22 +12,35 @@ public class BackgroundScroller : MonoBehaviour
     private float resetThresholdY = 0f;
     private Transform bg1;
     private Transform bg2;
+    private SpriteRenderer sr1;
+    private SpriteRenderer sr2;
+
+    public void SetSpeed(float newSpeed)
+    {
+        scrollSpeed = newSpeed;
+    }
+
+    public void SetColor(Color tint)
+    {
+        if (sr1 != null) sr1.color = tint;
+        if (sr2 != null) sr2.color = tint;
+    }
 
     void Start()
     {
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        if (sr != null)
+        sr1 = GetComponent<SpriteRenderer>();
+        if (sr1 != null)
         {
             // 自愈保护：若 Sprite 丢失，自动使用预加载的 StarsSprite
-            if (sr.sprite == null)
+            if (sr1.sprite == null)
             {
                 GameResources.Initialize();
-                sr.sprite = GameResources.StarsSprite;
+                sr1.sprite = GameResources.StarsSprite;
             }
 
-            if (sr.sprite != null)
+            if (sr1.sprite != null)
             {
-                backgroundHeight = sr.bounds.size.y;
+                backgroundHeight = sr1.bounds.size.y;
                 if (backgroundHeight <= 0.1f) backgroundHeight = 10f;
 
                 resetThresholdY = transform.position.y - backgroundHeight;
@@ -37,10 +50,10 @@ public class BackgroundScroller : MonoBehaviour
                 GameObject secondBg = new GameObject("Background_LoopCopy");
                 secondBg.transform.position = transform.position + Vector3.up * backgroundHeight;
                 secondBg.transform.localScale = transform.localScale;
-                var sr2 = secondBg.AddComponent<SpriteRenderer>();
-                sr2.sprite = sr.sprite;
-                sr2.sortingOrder = sr.sortingOrder;
-                sr2.color = sr.color;
+                sr2 = secondBg.AddComponent<SpriteRenderer>();
+                sr2.sprite = sr1.sprite;
+                sr2.sortingOrder = sr1.sortingOrder;
+                sr2.color = sr1.color;
                 bg2 = secondBg.transform;
             }
         }

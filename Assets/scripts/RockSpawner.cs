@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// 陨石生成器：基于对象池随机派发 Small / Normal / Large 三种陨石类型，并随时间推进平滑加速波次
@@ -12,6 +12,9 @@ public class RockSpawner : MonoBehaviour
     [Header("Speed Settings")]
     public float minFallSpeed = 2.8f;
     public float maxFallSpeed = 4.8f;
+
+    [Header("State Control")]
+    public bool isPaused = false;
 
     private float timer = 0f;
     private Camera cam;
@@ -45,6 +48,8 @@ public class RockSpawner : MonoBehaviour
 
     void Update()
     {
+        if (isPaused) return;
+
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver)
             return;
 

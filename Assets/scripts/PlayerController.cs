@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// 玩家飞船控制器：多重射击系统（Normal/Dual/Triple）、能量护盾光环与碰撞吸收判定
@@ -248,6 +248,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void TakeHit()
+    {
+        if (!isAlive) return;
+
+        if (hasShield)
+        {
+            // 护盾抵挡：消耗护盾，免除死亡，震动并播放破盾音效
+            RemoveShield();
+            CameraShake.Shake(0.18f, 0.25f);
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.PlayShieldBreakSound();
+            }
+        }
+        else
+        {
+            Die();
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!isAlive) return;
@@ -257,10 +278,9 @@ public class PlayerController : MonoBehaviour
         {
             if (hasShield)
             {
-                // 护盾抵挡：消耗护盾，免除死亡，粉碎陨石，震动并播放破盾反馈
                 RemoveShield();
                 rock.Die();
-                CameraShake.Shake(0.16f, 0.22f);
+                CameraShake.Shake(0.18f, 0.25f);
 
                 if (GameManager.Instance != null)
                 {
@@ -271,6 +291,22 @@ public class PlayerController : MonoBehaviour
             {
                 Die();
             }
+            return;
+        }
+
+        EnemyProjectile enemyProj = collision.GetComponent<EnemyProjectile>();
+        if (enemyProj != null)
+        {
+            enemyProj.Recycle();
+            TakeHit();
+            return;
+        }
+
+        BossController boss = collision.GetComponent<BossController>();
+        if (boss != null)
+        {
+            TakeHit();
+            return;
         }
     }
 

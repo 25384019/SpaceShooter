@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -11,12 +11,15 @@ public class ObjectPool : MonoBehaviour
 
     [Header("Pool Capacities")]
     public int initialProjectileCount = 30;
+    public int initialEnemyProjectileCount = 20;
     public int initialRockCount = 18;
 
     private readonly Queue<Projectile> projectilePool = new Queue<Projectile>();
+    private readonly Queue<EnemyProjectile> enemyProjectilePool = new Queue<EnemyProjectile>();
     private readonly Queue<Rock> rockPool = new Queue<Rock>();
 
     private Transform projectileRoot;
+    private Transform enemyProjectileRoot;
     private Transform rockRoot;
 
     void Awake()
@@ -36,6 +39,10 @@ public class ObjectPool : MonoBehaviour
         pRootObj.transform.SetParent(transform);
         projectileRoot = pRootObj.transform;
 
+        GameObject epRootObj = new GameObject("[Pool_EnemyProjectiles]");
+        epRootObj.transform.SetParent(transform);
+        enemyProjectileRoot = epRootObj.transform;
+
         GameObject rRootObj = new GameObject("[Pool_Rocks]");
         rRootObj.transform.SetParent(transform);
         rockRoot = rRootObj.transform;
@@ -50,12 +57,20 @@ public class ObjectPool : MonoBehaviour
 
     private void PrewarmPools()
     {
-        // 预热子弹池
+        // 预热玩家子弹池
         for (int i = 0; i < initialProjectileCount; i++)
         {
             Projectile p = CreateNewProjectile();
             p.gameObject.SetActive(false);
             projectilePool.Enqueue(p);
+        }
+
+        // 预热敌方/Boss子弹池
+        for (int i = 0; i < initialEnemyProjectileCount; i++)
+        {
+            EnemyProjectile ep = CreateNewEnemyProjectile();
+            ep.gameObject.SetActive(false);
+            enemyProjectilePool.Enqueue(ep);
         }
 
         // 预热陨石池
@@ -85,6 +100,27 @@ public class ObjectPool : MonoBehaviour
 
         Projectile projectile = projObj.AddComponent<Projectile>();
         return projectile;
+    }
+
+    private EnemyProjectile CreateNewEnemyProjectile()
+    {
+        GameObject epObj = new GameObject("EnemyProjectile_Pooled");
+        epObj.transform.SetParent(enemyProjectileRoot);
+
+        var sr = epObj.AddComponent<SpriteRenderer>();
+        sr.sprite = GameResources.ProjectileSprite;
+        sr.color = new Color(1f, 0.25f, 0.2f, 1f); // 警示赤红色
+        sr.sortingOrder = 6;
+
+        var col = epObj.AddComponent<CircleCollider2D>();
+        col.isTrigger = true;
+        col.radius = 0.16f;
+
+        var rb = epObj.AddComponent<Rigidbody2D>();
+        rb.isKinematic = true;
+
+        EnemyProjectile enemyProjectile = epObj.AddComponent<EnemyProjectile>();
+        return enemyProjectile;
     }
 
     private Rock CreateNewRock()
@@ -139,6 +175,35 @@ public class ObjectPool : MonoBehaviour
         proj.gameObject.SetActive(false);
         proj.transform.SetParent(projectileRoot);
         projectilePool.Enqueue(proj);
+    }
+
+    // ==================== 敌方子弹池借取与回收 ====================
+
+    public EnemyProjectile SpawnEnemyProjectile(Vector3 position, Quaternion rotation, float speed = 7.5f)
+    {
+        EnemyProjectile proj;
+        if (enemyProjectilePool.Count > 0)
+        {
+            proj = enemyProjectilePool.Dequeue();
+        }
+        else
+        {
+            proj = CreateNewEnemyProjectile();
+        }
+
+        proj.transform.position = position;
+        proj.transform.rotation = rotation;
+        proj.gameObject.SetActive(true);
+        proj.Init(speed);
+        return proj;
+    }
+
+    public void RecycleEnemyProjectile(EnemyProjectile proj)
+    {
+        if (proj == null) return;
+        proj.gameObject.SetActive(false);
+        proj.transform.SetParent(enemyProjectileRoot);
+        enemyProjectilePool.Enqueue(proj);
     }
 
     // ==================== 陨石池借取与回收 ====================

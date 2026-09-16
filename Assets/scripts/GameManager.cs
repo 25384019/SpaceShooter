@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -185,8 +185,9 @@ public class GameManager : MonoBehaviour
         if (spawner == null)
         {
             GameObject spawnerObj = new GameObject("RockSpawner");
-            spawnerObj.AddComponent<RockSpawner>();
+            spawner = spawnerObj.AddComponent<RockSpawner>();
         }
+        spawner.isPaused = false;
 
         // 3. Ensure Background Scroller
         BackgroundScroller scroller = FindObjectOfType<BackgroundScroller>();
@@ -213,6 +214,20 @@ public class GameManager : MonoBehaviour
                 newBg.transform.localScale = new Vector3(3.1f, 2.3f, 1f);
                 newBg.AddComponent<BackgroundScroller>();
             }
+        }
+
+        // 4. Ensure WaveManager
+        if (WaveManager.Instance == null && FindObjectOfType<WaveManager>() == null)
+        {
+            GameObject waveObj = new GameObject("WaveManager");
+            waveObj.AddComponent<WaveManager>();
+        }
+
+        // 5. Ensure RandomEventManager
+        if (RandomEventManager.Instance == null && FindObjectOfType<RandomEventManager>() == null)
+        {
+            GameObject eventObj = new GameObject("RandomEventManager");
+            eventObj.AddComponent<RandomEventManager>();
         }
     }
 
@@ -317,13 +332,18 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LoadSceneWithDelay(loseSceneName, 1.2f));
     }
 
-    private void OnTimeUp()
+    public void TriggerVictory()
     {
         if (isGameOver || isGameWon) return;
         isGameWon = true;
 
         SaveScores();
-        StartCoroutine(LoadSceneWithDelay(winSceneName, 1.0f));
+        StartCoroutine(LoadSceneWithDelay(winSceneName, 1.2f));
+    }
+
+    private void OnTimeUp()
+    {
+        TriggerVictory();
     }
 
     private IEnumerator LoadSceneWithDelay(string sceneName, float delay)

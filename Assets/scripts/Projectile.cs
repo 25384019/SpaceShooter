@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// 子弹控制组件，支持任意飞行朝向、对象池循环复用与零内存分配
@@ -58,6 +58,15 @@ public class Projectile : MonoBehaviour
         {
             rock.TakeDamage();
             Recycle();
+            return;
+        }
+
+        BossController boss = collision.GetComponent<BossController>();
+        if (boss != null)
+        {
+            boss.TakeDamage(1);
+            Recycle();
+            return;
         }
     }
 
