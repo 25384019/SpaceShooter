@@ -298,15 +298,15 @@ public class BossController : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             Vector3 randomOffset = new Vector3(Random.Range(-0.8f, 0.8f), Random.Range(-0.6f, 0.6f), 0);
-            ExplosionFX.Spawn(transform.position + randomOffset, 1.8f);
-            CameraShake.Shake(0.18f, 0.25f);
+            ExplosionFX.Spawn(transform.position + randomOffset, 2.0f, ExplosionStyle.DreadnoughtNuke);
+            CameraShake.Shake(0.20f, 0.28f);
             if (GameManager.Instance != null) GameManager.Instance.PlayExplosionSound();
             yield return new WaitForSeconds(0.22f);
         }
 
         // 最终震撼大引爆
-        ExplosionFX.Spawn(transform.position, 3.2f);
-        CameraShake.Shake(0.6f, 0.45f);
+        ExplosionFX.Spawn(transform.position, 3.8f, ExplosionStyle.DreadnoughtNuke);
+        CameraShake.Shake(0.65f, 0.50f);
         if (GameManager.Instance != null) GameManager.Instance.PlayExplosionSound();
 
         // 掉落 2 个强力护盾道具回馈玩家

@@ -322,8 +322,8 @@ public class PlayerController : MonoBehaviour
         if (col != null)
             col.enabled = false;
 
-        ExplosionFX.Spawn(transform.position, 1.5f);
-        CameraShake.Shake(0.35f, 0.40f);
+        ExplosionFX.Spawn(transform.position, 1.8f, ExplosionStyle.PlasmaBlue);
+        CameraShake.Shake(0.38f, 0.45f);
 
         if (GameManager.Instance != null)
         {
